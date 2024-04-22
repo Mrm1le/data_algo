@@ -2,16 +2,18 @@
  * @Author: tianhaijian@immotors.com
  * @Date: 2024-02-21 09:48:08
  * @LastEditors: TianHaijian
- * @FilePath: /TestProject/test_tree/test.cc
+ * @FilePath: /data_algo/test_tree/test.cc
  * @Description:
- *  1. 深度优先搜索和广度优先搜索计算二叉树深度
+ *  1. 深度优先搜索和广度优先搜索计算二叉树深度, 深度优先搜索效率较高
  *  2. 前序遍历、中序遍历、后续遍历的递归实现
     3. 根据vector创建二叉平衡树 createBalanceTree
+    4. 平衡树深度depth和节点数量n的关系为: n = std::pow(2, depth);
  * Copyright (c) 2024 by NVIDIA, All Rights Reserved.
  */
 
 #include "../utils/time.h"
 #include <algorithm>
+#include <cmath>
 #include <iostream>
 #include <queue>
 #include <vector>
@@ -59,7 +61,7 @@ std::vector<int> preorderTraversal(TreeNode *root) {
   std::vector<int> ret;
   if (!root)
     return ret;
-  ret.emplace_back(root->val);
+  ret.emplace_back(root->val); //先添加本节点，是为前序遍历
   auto left_ret = preorderTraversal(root->left);
   ret.insert(ret.end(), left_ret.begin(), left_ret.end());
   auto right_ret = preorderTraversal(root->right);
@@ -71,9 +73,9 @@ std::vector<int> inorderTraversal(TreeNode *root) {
   std::vector<int> ret;
   if (!root)
     return ret;
-  ret.emplace_back(root->val);
   auto left_ret = inorderTraversal(root->left);
   ret.insert(ret.begin(), left_ret.begin(), left_ret.end());
+  ret.emplace_back(root->val); 
   auto right_ret = inorderTraversal(root->right);
   ret.insert(ret.end(), right_ret.begin(), right_ret.end());
   return ret;
@@ -83,11 +85,11 @@ std::vector<int> postorderTraversal(TreeNode *root) {
   std::vector<int> ret;
   if (!root)
     return ret;
-  ret.emplace_back(root->val);
   auto right_ret = postorderTraversal(root->right);
   ret.insert(ret.begin(), right_ret.begin(), right_ret.end());
   auto left_ret = postorderTraversal(root->left);
   ret.insert(ret.begin(), left_ret.begin(), left_ret.end());
+  ret.emplace_back(root->val);
   return ret;
 }
 
@@ -96,8 +98,8 @@ TreeNode *createBalanceTree(const std::vector<int> &vi, int left, int right) {
     return nullptr;
   int mid = (left + right) / 2;
   TreeNode *root = new TreeNode(vi.at(mid));
-  root->left = createTree(vi, left, mid - 1);
-  root->right = createTree(vi, mid + 1, right);
+  root->left = createBalanceTree(vi, left, mid - 1);
+  root->right = createBalanceTree(vi, mid + 1, right);
   return root;
 }
 
@@ -112,16 +114,22 @@ int main() {
   root->right->right = new TreeNode(7);
   std::vector<int> vi{};
   int i = 0;
-  while (i++ < 10)
+  while (i++ < std::pow(2, 15))
     vi.push_back(i);
   auto Tree2 = createBalanceTree(vi, 0, vi.size() - 1);
   // 使用广度优先搜索计算二叉树深度并输出结果
-  std::cout << "Breadth First Search traversal of Binary Tree: ";
-  std::cout << maxDepthBFS(root) << std::endl;
-  std::cout << "Depth First Search traversal of Binary Tree: ";
+  utils::Timer<enable_timer> max_breadth_timer("max_breadth_timer");
+  std::cout << "Breadth First Search traversal of Binary Tree, the DEPTH of "
+               "the tree: ";
+  max_breadth_timer.Tic();
+  std::cout << maxDepthBFS(Tree2) << std::endl;
+  max_breadth_timer.Toc();
+
+  std::cout
+      << "Depth First Search traversal of Binary Tree, the DEPTH of the tree: ";
   utils::Timer<enable_timer> max_depth_timer("max_depth_timer");
   max_depth_timer.Tic();
-  std::cout << maxDepthDFS(root) << std::endl;
+  std::cout << maxDepthDFS(Tree2) << std::endl;
   max_depth_timer.Toc();
   // 使用前序遍历二叉树
   auto preorder_result = preorderTraversal(root);
@@ -132,21 +140,25 @@ int main() {
   auto preorder_result_2 = preorderTraversal(Tree2);
   std::cout << "preorder traversal of Binary Tree2: ";
   std::for_each(preorder_result_2.begin(), preorder_result_2.end(),
-                [](int val) { std::cout << val << " "; });
+                [](int val) {
+                  // std::cout << val << " ";
+                });
   std::cout << std::endl;
 
   // 使用中序遍历二叉树
   auto inorder_result = inorderTraversal(root);
   std::cout << "inorder traversal of Binary Tree: ";
-  std::for_each(inorder_result.begin(), inorder_result.end(),
-                [](int val) { std::cout << val << " "; });
+  std::for_each(inorder_result.begin(), inorder_result.end(), [](int val) {
+    // std::cout << val << " ";
+  });
   std::cout << std::endl;
 
   // 使用后序遍历二叉树
   auto postorder_result = postorderTraversal(root);
   std::cout << "postorder traversal of Binary Tree: ";
-  std::for_each(postorder_result.begin(), postorder_result.end(),
-                [](int val) { std::cout << val << " "; });
+  std::for_each(postorder_result.begin(), postorder_result.end(), [](int val) {
+    // std::cout << val << " ";
+  });
   std::cout << std::endl;
 
   // 释放内存
