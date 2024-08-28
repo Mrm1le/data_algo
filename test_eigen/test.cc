@@ -34,8 +34,13 @@ int main() {
     feedMartrix(B, "df_b_martrix.txt");
     feedMartrix(C, "df_c_martrix.txt");
     feedMartrix(T, "df_t_vec.txt");
-    double result = C.block<6, 1>(6, 0).dot(T.block<6, 1>(0, 0).transpose());
+    double result = C.block<6, 1>(0, 0).dot(T.block<6, 1>(0, 0).transpose());
+    Eigen::VectorXd dot_T(6); 
+    dot_T << 0, 1, 2*T(0, 1), 3*T(0, 1)*T(0, 1), 4*T(0, 1)*T(0, 1)*T(0, 1), 5*T(0, 1)*T(0, 1)*T(0, 1)*T(0, 1);
+    double result2 = C.block<6, 1>(0, 0).dot(dot_T);
+    std::cout << "T(0, 1)" << T(0, 1) << std::endl;
     std::cout << "result: " << result << std::endl;
+    std::cout << "result2: " << result2 << std::endl;
     return 0;
 
 
