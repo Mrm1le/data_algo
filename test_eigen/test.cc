@@ -1,6 +1,6 @@
 #include <iostream>
 #include <fstream>
-#include <Eigen/Dense>
+#include "Eigen/Dense"
 #include <sstream>
 #include <string>
 #include <stdexcept>
@@ -34,34 +34,54 @@ int main() {
     feedMartrix(B, "df_b_martrix.txt");
     feedMartrix(C, "df_c_martrix.txt");
     feedMartrix(T, "df_t_vec.txt");
-    double result = C.block<6, 1>(0, 0).dot(T.block<6, 1>(0, 0).transpose());
-    Eigen::VectorXd dot_T(6); 
-    dot_T << 0, 1, 2*T(0, 1), 3*T(0, 1)*T(0, 1), 4*T(0, 1)*T(0, 1)*T(0, 1), 5*T(0, 1)*T(0, 1)*T(0, 1)*T(0, 1);
-    double result2 = C.block<6, 1>(0, 0).dot(dot_T);
+    Eigen::Matrix<double, 6, 1> t0;
+    Eigen::Matrix<double, 6, 1> t1;
+    Eigen::Matrix<double, 6, 1> tInv;
+    t0 << 1, 0, 0, 0, 0, 0;
+    t1 = T.block<6 ,1>(0, 0).transpose();
+    // t = T.block<6, 1>(0, 0);
+    tInv = t1.cwiseInverse();
+    Eigen::Matrix<double, 6, 1> beta0 = Eigen::Matrix<double, 6, 1>::Zero();
+    Eigen::Matrix<double, 6, 1> beta1 = Eigen::Matrix<double, 6, 1>::Zero();
+    Eigen::Matrix<double, 6, 1> beta2 = Eigen::Matrix<double, 6, 1>::Zero();
+    Eigen::Matrix<double, 6, 1> beta3 = Eigen::Matrix<double, 6, 1>::Zero();
+    Eigen::Matrix<double, 6, 1> beta4 = Eigen::Matrix<double, 6, 1>::Zero();
+    Eigen::Matrix<double, 6, 1> beta5 = Eigen::Matrix<double, 6, 1>::Zero();
+    const double s1 = 0;
+    const double s2 = s1 * s1;
+    const double s3 = s2 * s1;
+    const double s4 = s2 * s2;
+    const double s5 = s4 * s1;
+    beta0 = t0;
+    beta1(1, 0) = 1.0;
+    beta1(2, 0) = 2.0 * s1;
+    beta1(3, 0) = 3.0 * s2;
+    beta1(4, 0) = 4.0 * s3;
+    beta1(5, 0) = 5.0 * s4;
+    beta2(2, 0) = 2.0;
+    beta2(3, 0) = 6.0 * s1;
+    beta2(4, 0) = 12.0 * s2;
+    beta2(5, 0) = 20.0 * s3;
+    beta3(3, 0) = 6.0;
+    beta3(4, 0) = 24 * s1;
+    beta3(5, 0) = 60 * s2;
+    beta4(4, 0) = 24.0;
+    beta4(5, 0) = 120 * s1;
+    beta5(5, 0) = 120;
+    double sigma = C.block<6, 1>(6, 0).dot(beta0); // c0 = sigma0 c * beta0 = sigma1
+    double dsigma = C.block<6, 1>(6, 0).dot(beta1); // c1 = dsigma0
+    double ddsigma = C.block<6, 1>(6, 0).dot(beta2); // c2 * 2 = ddsigma0
+    double dddsigma = C.block<6, 1>(6, 0).dot(beta3); // c3 * 6 = dddsigma0
+    double ddddsigma = C.block<6, 1>(6, 0).dot(beta4);
+    double dddddsigma = C.block<6, 1>(6, 0).dot(beta5);
     std::cout << "T(0, 1)" << T(0, 1) << std::endl;
-    std::cout << "result: " << result << std::endl;
-    std::cout << "result2: " << result2 << std::endl;
+    std::cout << "beta1 " << beta1.transpose() << std::endl;
+    std::cout << "tInv " << tInv.transpose() << std::endl;
+    std::cout << "sigma: " << sigma << std::endl;
+    std::cout << "dsigma: " << dsigma << std::endl;
+    std::cout << "ddsigma: " << ddsigma / 2 << std::endl;
+    std::cout << "dddsigma: " << dddsigma / 6 << std::endl;
+    std::cout << "ddddsigma: " << ddddsigma / 24 << std::endl;
+    std::cout << "dddddsigma: " << dddddsigma / 120 << std::endl;
     return 0;
-
-
 }
-
-// c:
-//                                  22.6601                                 23.7754
-//                                  4.95331                                 -3.3867
-//                                 -2.24087                                 1.36541
-//                                  2.33686                               -0.861707
-//                                 -0.90048                              -0.0509022
-//                                 0.125223                               0.0935533
-
-// b:
-
-//                                  22.6601                                 23.7754
-//                                  4.95331                                 -3.3867
-//                                 -4.48175                                 2.73082
-//                                        0                                       0
-//                                        0                                       0
-//                                  26.9341                                  20.935
-
-// T 
-//                   1             12.0008              144.02             1728.36             20741.7              248918
