@@ -1,5 +1,7 @@
 import numpy as np
 import matplotlib.pyplot as plt
+import os
+# 获取当前目录
 
 # 椭圆参数
 a = 5  # 半长轴
@@ -45,12 +47,13 @@ data = np.loadtxt("gradient_descent_data.txt", delimiter=",", skiprows=1)
 t = data[:, 0]
 grad = data[:, 1]
 distance = data[:, 2]
+hessian = data[:, 3]
 
 # 绘制图形
 plt.figure(figsize=(12, 6))
 
 # 绘制 t vs distance
-plt.subplot(1, 2, 1)
+plt.subplot(1, 3, 1)
 plt.plot(t, distance, label='dist', color='blue')
 plt.title("t vs Distance")
 plt.xlabel("t")
@@ -59,7 +62,7 @@ plt.grid()
 plt.legend()
 
 # 绘制迭代次数 vs grad
-plt.subplot(1, 2, 2)
+plt.subplot(1, 3, 2)
 plt.plot(np.arange(len(grad)), grad, label='grad', color='red')
 plt.plot(np.arange(len(grad)), t, label='t', color='k')
 plt.title("Iteration vs Gradient")
@@ -68,6 +71,15 @@ plt.ylabel("Gradient")
 plt.grid()
 plt.legend()
 
+# 绘制迭代次数 vs hessian
+plt.subplot(1, 3, 3)
+plt.plot(np.arange(len(hessian)), hessian, label='hess', color='red')
+plt.plot(np.arange(len(hessian)), t, label='t', color='k')
+plt.title("Iteration vs Hessian")
+plt.xlabel("Iteration")
+plt.ylabel("Hessian")
+plt.grid()
+plt.legend()
 # 显示图形
 plt.tight_layout()
 plt.savefig("gradient_descent_results.png")
