@@ -2,7 +2,7 @@
  * @Author: tianhaijian@immotors.com
  * @Date: 2024-03-20 17:26:20
  * @LastEditors: TianHaijian
- * @FilePath: /TestProject/test_vector/test.cc
+ * @FilePath: /data_algo/test_vector/test.cc
  * @Description:
  *  1. push_back对已有对象的效率更高，emplace_back对临时对象的效率更高,
  insert插入的效率最低
@@ -20,7 +20,7 @@
       两种向算法传递函数的方法
           1. 传入自定义函数
           2. 传入lambda函数
-
+    5. push_back会涉及隐式类型转换， emplace_back则会显式构建
  * Copyright (c) 2024 by NVIDIA, All Rights Reserved.
  */
 #include "../utils/time.h"
@@ -54,6 +54,13 @@ struct Parameter {
   Parameter() : width(0.0), length(0.0) {}
   double width = 0.0;
   double length = 0.0;
+};
+
+class Foo{
+public:
+  explicit Foo(int x):foo_(x){}
+private:
+  int foo_;
 };
 
 int main() {
@@ -212,5 +219,11 @@ int main() {
       svec.end(), [](const std::string &s) {});
 
   std::cout << "end success" << std::endl;
+  
+  // push_back涉及隐式类型转换
+  std::vector<Foo> v_foo{};
+  v_foo.emplace_back(1);
+  // 执行push_back会报错
+  // v_foo.push_back(1);
   return 0;
 }

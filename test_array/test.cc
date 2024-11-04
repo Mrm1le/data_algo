@@ -18,5 +18,7 @@ int fool(int *begin, int *end) {
 int main() {
   int a[20] = {0};
   fool(a, &a[19]);
+  constexpr int b{0};
+  printf("b %d\n", b);
   return 0;
 }
