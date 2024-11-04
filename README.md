@@ -1,2 +1,2 @@
 # data_algo
-data &amp; algorithms on developing
+data & algorithms on developing
