@@ -107,20 +107,20 @@ double wolfeStep(double t, double grad, double hess) {
 
     // 检查 Armijo 条件
     if (newDistSquared > currentDistSquared + c1 * alpha * grad * newtonStep) {
-      std::cout << "not satisfy armijo condition, newDistSquared: "
-                << newDistSquared
-                << ", currentDistSquared: " << currentDistSquared
-                << ", alpha: " << alpha << std::endl;
+      // std::cout << "not satisfy armijo condition, newDistSquared: "
+      //           << newDistSquared
+      //           << ", currentDistSquared: " << currentDistSquared
+      //           << ", alpha: " << alpha << std::endl;
       brackt = true;
     }
     // 检查 Curvature 条件
     else if (std::abs(newGrad) < c2 * std::abs(grad)) {
-      std::cout << "not satisfy Curvature condition, new grad: " << newGrad
-                << ", grad: " << grad << ", alpha: " << alpha << std::endl;
+      // std::cout << "not satisfy Curvature condition, new grad: " << newGrad
+      //           << ", grad: " << grad << ", alpha: " << alpha << std::endl;
       brackt = false;
     } else {
-      std::cout << "both satisfy armijo condition and wolfe, step: " << alpha
-                << std::endl;
+      // std::cout << "both satisfy armijo condition and wolfe, step: " << alpha
+      //           << std::endl;
       break; // 两个条件都满足
     }
     if (brackt) {
@@ -129,7 +129,6 @@ double wolfeStep(double t, double grad, double hess) {
       alpha *= 1.5;
     }
   }
-  std::cout << "return alpha: " << alpha << std::endl;
   return alpha;
 }
 
@@ -138,7 +137,6 @@ double newtonMethod(double initialT, double learningRate, int maxIterations,
                     double alpha, bool is_newton) {
   std::ofstream outputFile("gradient_descent_data.txt", std::ios::app);
   outputFile << "t,grad,distance,hessian\n"; // CSV 格式的表头
-
   double t = initialT;
   double gradThreshold = 1e-6;        // 梯度阈值
   double hessianThreshold = 1e-6;     // 梯度阈值
@@ -165,7 +163,7 @@ double newtonMethod(double initialT, double learningRate, int maxIterations,
     while (t_new > 2 * M_PI)
       t_new -= 2 * M_PI;
     double dis_new = distanceFunction(t_new);
-    std::cout << "iter:" << i << ", t: " << t << ", t_new: " << t_new
+    std::cout << "iter:" << i << ", step: " << step << ", t: " << t << ", t_new: " << t_new
               << ", dis: " << dis << ", dist_new: " << dis_new << std::endl;
     if (std::abs(grad) < gradThreshold ||
         std::abs(t_new - t) < paramChangeThreshold ||
@@ -173,9 +171,9 @@ double newtonMethod(double initialT, double learningRate, int maxIterations,
       std::cout << "iter:" << i << ", Convergence reached." << std::endl;
       break;
     }
-    t = t_new;
     // 保存数据到文件
     outputFile << t << "," << grad << "," << dis << "," << hess << "\n";
+    t = t_new;
   }
   outputFile.close();
   return t;
@@ -183,7 +181,7 @@ double newtonMethod(double initialT, double learningRate, int maxIterations,
 
 // 主函数
 int main() {
-  double initialT = 5.0; // 初始 t 值
+  double initialT = 0.0; // 初始 t 值
   double learningRate = 0.01;
   int maxIterations = 1000;
   bool test_newton = true;

@@ -37,7 +37,7 @@ plt.legend()
 
 # 保存图形
 plt.savefig("ellipse_line.png")
-plt.show()
+# plt.show()
 
 
 # 读取数据
@@ -83,4 +83,4 @@ plt.legend()
 # 显示图形
 plt.tight_layout()
 plt.savefig("gradient_descent_results.png")
-plt.show()
+# plt.show()
