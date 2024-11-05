@@ -56,9 +56,10 @@ struct Parameter {
   double length = 0.0;
 };
 
-class Foo{
+class Foo {
 public:
-  explicit Foo(int x):foo_(x){}
+  explicit Foo(int x) : foo_(x) {}
+
 private:
   int foo_;
 };
@@ -219,7 +220,7 @@ int main() {
       svec.end(), [](const std::string &s) {});
 
   std::cout << "end success" << std::endl;
-  
+
   // push_back涉及隐式类型转换
   std::vector<Foo> v_foo{};
   v_foo.emplace_back(1);

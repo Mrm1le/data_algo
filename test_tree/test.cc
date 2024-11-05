@@ -61,7 +61,7 @@ std::vector<int> preorderTraversal(TreeNode *root) {
   std::vector<int> ret;
   if (!root)
     return ret;
-  ret.emplace_back(root->val); //先添加本节点，是为前序遍历
+  ret.emplace_back(root->val); // 先添加本节点，是为前序遍历
   auto left_ret = preorderTraversal(root->left);
   ret.insert(ret.end(), left_ret.begin(), left_ret.end());
   auto right_ret = preorderTraversal(root->right);
@@ -75,7 +75,7 @@ std::vector<int> inorderTraversal(TreeNode *root) {
     return ret;
   auto left_ret = inorderTraversal(root->left);
   ret.insert(ret.begin(), left_ret.begin(), left_ret.end());
-  ret.emplace_back(root->val); 
+  ret.emplace_back(root->val);
   auto right_ret = inorderTraversal(root->right);
   ret.insert(ret.end(), right_ret.begin(), right_ret.end());
   return ret;
